@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required(login_url='/login/')
 def home(request):
     return render(request, "auth/home.html")
 
