@@ -10,6 +10,6 @@ Login
         {% csrf_token %}
         {{form}}
         <button type="submit">Login</button>
-        <p>Don't have an account? <a href="/Mena_register/register">Sign up</a></p>
+        <p>Don't have an account? <a href="{% url 'register' %}">Sign up</a></p>
     </form>
 {% endblock %}
