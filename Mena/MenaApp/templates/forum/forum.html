@@ -1,4 +1,5 @@
 {% extends "index/base.html" %}
+{% load static %}
 
 {% block title %}
 Forum
@@ -6,9 +7,45 @@ Forum
 
 {% block content %}
     <div>
-        <form method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
+        <h1>Discussion Forum</h1>
+    </div>
+    <div class="forum-rules-container">
+        <h1>Welcome to the Mena Forum</h1>
+        <p>Here, users can discuss their concerns and queries.</p>
+
+        <div class="rule">
+            <span class="rule-icon">⚫</span>
+            <span class="rule-text">No racism/hate in any channels. (unless Admin) Be generous. This server doesn’t support racism/hate.</span>
+        </div>
+
+        <div class="rule">
+            <span class="rule-icon">⚫</span>
+            <span class="rule-text">Do not post Discord Links. Discord links are highly prohibited.</span>
+        </div>
+
+        <div class="rule">
+            <span class="rule-icon">⚫</span>
+            <span class="rule-text">Avoid faulty/rude comments. Every channel is for fun. This is a humble request try not to have fights.</span>
+        </div>
+
+        <div class="rule">
+            <span class="rule-icon">⚫</span>
+            <span class="rule-text">Do not spam. Use spam channel for spamming purposes.</span>
+        </div>
+
+        <div class="rule">
+            <span class="rule-icon">⚫</span>
+            <span class="rule-text">Do not post another member’s personal information. Not without his or her permission.</span>
+        </div>
+
+        <div class="rule">
+            <span class="rule-icon">⚫</span>
+            <span class="rule-text">Post content in relevant channels. Every channel has got its specific purpose. Kindly read the channel rules for further information.</span>
+        </div>
+
+        <div class="rule">
+            <span class="rule-icon">⚫</span>
+            <span class="rule-text">Do not cause nuisance. Repeated complaints from several members will lead to administrative action. Do not argue with staff. Decisions are final.</span>
+        </div>
     </div>
 {% endblock %}

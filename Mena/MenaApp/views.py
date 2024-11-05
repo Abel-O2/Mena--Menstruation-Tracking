@@ -14,7 +14,7 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-        return redirect("/MenaApp\/home")
+        return redirect("/MenaApp/home")
     else:
         form = RegisterForm()
     return render(request, "auth/register.html", {"form":form})
