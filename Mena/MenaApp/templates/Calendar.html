@@ -13,52 +13,57 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: '/calendar_app/events/',
-                editable: true,
-                selectable: true,
-                select: function(info) {
-                    var title = prompt("Start of period:");
-                    if (title) {
-                        $.ajax({
-                            url: '/MenaApp/calendar/',
-                            type: 'POST',
-                            data: JSON.stringify({
-                                title: title,
-                                start: info.startStr,
-                                end: info.endStr,
-                                is_pinned: false  
-                            }),
-                            contentType: 'application/json',
-                            success: function() {
-                                calendar.refetchEvents();
-                            }
-                        });
+        var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: '/MenaApp/calendar/',
+        editable: true,
+        selectable: true,
+        select: function(info) {
+            var title = prompt("Start of period:");
+            if (title) {
+                $.ajax({
+                    url: '/MenaApp/calendar/',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        title: title,
+                        start: info.startStr,
+                        end: info.endStr,
+                        is_pinned: false  
+                    }),
+                    contentType: 'application/json',
+                    success: function(data) {
+                        // Save the event ID for later updates
+                        info.event.id = data.id;
+                        calendar.refetchEvents();
                     }
-                    calendar.unselect();
-                },
-                eventClick: function(info) {
-                    if (confirm("Do you want to pin this day?")) {
-                        info.event.setExtendedProp('is_pinned', true);
-                        $.ajax({
-                            url: '/MenaApp/calendar/' + info.event.id + '/',
-                            type: 'PATCH',
-                            data: JSON.stringify({ is_pinned: true }),
-                            contentType: 'application/json',
-                            success: function() {
-                                calendar.refetchEvents();
-                            }
-                        });
-                    }
-                },
-                eventRender: function(info) {
-                    console.log(info.event.title);
+                });
+            }
+            calendar.unselect();
+        },
+        eventClick: function(info) {
+            var isPinned = confirm("Do you want to pin this day?");
+            info.event.setExtendedProp('is_pinned', isPinned);
+            $.ajax({
+                url: '/MenaApp/calendar/',
+                type: 'PATCH',
+                data: JSON.stringify({
+                    id: info.event.id,
+                    is_pinned: isPinned
+                }),
+                contentType: 'application/json',
+                success: function() {
+                    calendar.refetchEvents();
                 }
             });
-            calendar.render();
-        });
+        },
+        eventRender: function(info) {
+            console.log(info.event.title);
+        }
+    });
+    calendar.render();
+});
+
     </script>
 </body>
 </html>

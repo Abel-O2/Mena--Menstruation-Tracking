@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from .models import Post
 from .models import Symptoms
 from .models import Calendar
-from .forms import SymptomsForm, PostsForm
+from .forms import SymptomsForm, PostsForm, CalendarForm
 import json
 from django.views.decorators.csrf import csrf_exempt
 
@@ -73,6 +73,43 @@ class SymptomsView(View):
 def calendar_view(request):
     return render(request, 'calendar.html')
 
+@csrf_exempt
+def timeOfTheMonth(request):
+    if request.method == 'GET':
+        period = Calendar.objects.all()
+        return render(request, 'calendar.html', {'period': period})
+    elif request.method == 'POST':
+        data = json.loads(request.body)
+        title = data.get('title', 'Untitled Event')
+        start_time = data.get('start')
+        end_time = data.get('end')
+        is_pinned = data.get('is_pinned', False)
+        
+        if not start_time or not end_time:
+            return JsonResponse({"error": "Start time and end time are required."}, status=400)
+        
+        # Creating a new event
+        event = Calendar.objects.create(
+            title=title,
+            start_time=start_time,
+            end_time=end_time,
+            is_pinned=is_pinned
+        )
+        return JsonResponse({"id": event.id}, status=201)
+    
+    elif request.method == 'PATCH':
+        data = json.loads(request.body)
+        period_id = data.get('id')
+        if not period_id or 'is_pinned' not in data:
+            return JsonResponse({"error": "Missing 'id' or 'is_pinned' parameter"}, status=400)
+        
+        # Updating an existing event
+        Calendar.objects.filter(id=period_id).update(is_pinned=data['is_pinned'])
+        return JsonResponse({"status": "success"})
+
+
+
+'''
 @csrf_exempt 
 def timeOfTheMonth(request):
     if request.method == 'GET':
@@ -87,11 +124,10 @@ def timeOfTheMonth(request):
             is_pinned=data.get('is_pinned', False)
         )
         return JsonResponse({"id": mark.id}, status=201)
-    elif request.method == 'PATCH':
+    elif request.method == 'POST':
         data = json.loads(request.body)
         period_id = data.get('id')
         if period_id is None or 'is_pinned' not in data:
             return JsonResponse({"error": "Missing 'id' or 'is_pinned' parameter"}, status=400)
         Calendar.objects.filter(id=period_id).update(is_pinned=data['is_pinned'])
-        return JsonResponse({"status": "success"})
-    
+        return JsonResponse({"status": "success"})'''
