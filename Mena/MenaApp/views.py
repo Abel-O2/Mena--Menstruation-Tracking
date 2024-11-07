@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from .models import Post
 from .models import Symptoms
 from .models import Calendar
-from .forms import SymptomsForm
+from .forms import SymptomsForm, PostsForm
 import json
 from django.views.decorators.csrf import csrf_exempt
 
@@ -27,9 +27,21 @@ def register(request):
     return render(request, "auth/register.html", {"form":form})
 
 @login_required(login_url='/login/')
-def post_forum(request):
+def get_forum(request):
     posts = Post.objects.all()
     return render(request, "forum/forum.html", {"posts": posts})
+
+def post_forum(request):
+    if request.method == "POST":
+        form = PostsForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.userID = request.user
+            post.save()
+            return redirect('/MenaApp/forum')
+    else:
+        form = PostsForm()
+    return render(request, "forum/post.html", {"form": form})
 
 def logout_view(request):
     logout(request)

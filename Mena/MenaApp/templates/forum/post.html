@@ -1,0 +1,14 @@
+{% extends "index/base.html" %}
+{% load static %}
+
+{% block title %}
+Forum
+{% endblock %}
+
+{% block content %}
+<form method="post" class="form-container">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button">Post</button>
+</form>
+{% endblock %}

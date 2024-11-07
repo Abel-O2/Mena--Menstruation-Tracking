@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Symptoms
+from .models import Symptoms, Post
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True,widget=forms.EmailInput(attrs={
@@ -32,6 +32,22 @@ class RegisterForm(UserCreationForm):
             'username': forms.TextInput(attrs={
                 'class': 'input-field',
                 'placeholder': 'Username'
+            }),
+        }
+
+class PostsForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'input-field',
+                'placeholder': 'Title'
+            }),
+
+            'content': forms.Textarea(attrs={ 
+                'class': 'text-field', 
+                'placeholder': 'Type Here...' 
             }),
         }
 
