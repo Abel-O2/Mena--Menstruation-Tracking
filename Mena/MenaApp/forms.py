@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Symptoms, Post
+from .models import Symptoms, Post, Calendar
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True,widget=forms.EmailInput(attrs={
@@ -55,3 +55,12 @@ class SymptomsForm(forms.ModelForm):
     class Meta:
         model = Symptoms
         fields = ['phase']
+
+class CalendarForm(forms.ModelForm):
+    class Meta:
+        model = Calendar
+        fields = ['title', 'description', 'start_time', 'end_time', 'is_pinned']
+        widgets = {
+            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
