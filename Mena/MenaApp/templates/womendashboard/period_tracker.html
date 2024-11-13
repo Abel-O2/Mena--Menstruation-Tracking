@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Period Tracker</title>
+    <!-- Link the CSS file -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>MENA</h2>
+        <ul>
+            <li><a href="{% url 'period_tracker' %}">Home</a></li>
+            <li><a href="#">Forum</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <header>
+            <h2>Welcome Back, {{ user.username }}</h2>
+        </header>
+        <div class="main">
+            <div class="calendar">
+                <p>{{ today }}</p>
+                <!-- Placeholder for a calendar -->
+                <div class="calendar-box">Calendar Widget</div>
+            </div>
+            <div class="period-info">
+                <!-- Period information here -->
+            </div>
+            <div class="mood">
+                <h4>Today You Might Be Feeling:</h4>
+                <p>{{ mood.mood }}</p>
+            </div>
+            <div class="lessons">
+                <h4>Menstruation Lessons</h4>
+                <ul>
+                    <li>Ovulation is a phase of the menstrual cycle...</li>
+                    <li>It generally occurs about two weeks...</li>
+                    <li>Most ovulation predictor kits work by...</li>
+                    <li>Some women who aren’t ovulating...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
