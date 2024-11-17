@@ -77,6 +77,64 @@ def calendar_view(request):
 def timeOfTheMonth(request):
     if request.method == 'GET':
         period = Calendar.objects.all()
+        events = [
+            {
+                'id': event.id,
+                'title': event.title,
+                'start': event.start_time.isoformat(),
+                'end': event.end_time.isoformat(),
+                'is_pinned': event.is_pinned
+            } for event in period
+        ]
+        return JsonResponse(events, safe=False)
+    
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            title = data.get('title', 'Untitled Event')
+            start_time = data.get('start')
+            end_time = data.get('end')
+            is_pinned = data.get('is_pinned', False)
+
+            if not start_time or not end_time:
+                return JsonResponse({"error": "Start time and end time are required."}, status=400)
+            
+            # Creating a new event
+            event = Calendar.objects.create(
+                title=title,
+                start_time=start_time,
+                end_time=end_time,
+                is_pinned=is_pinned
+            )
+            return JsonResponse({"id": event.id}, status=201)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format."}, status=400)
+
+    elif request.method == 'PATCH':
+        try:
+            data = json.loads(request.body)
+            period_id = data.get('id')
+            if not period_id or 'is_pinned' not in data:
+                return JsonResponse({"error": "Missing 'id' or 'is_pinned' parameter"}, status=400)
+            
+            # Updating an existing event
+            Calendar.objects.filter(id=period_id).update(is_pinned=data['is_pinned'])
+            return JsonResponse({"status": "success"})
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format."}, status=400)
+
+    else:
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+
+'''
+def calendar_view(request):
+    return render(request, 'calendar.html')
+
+@csrf_exempt
+def timeOfTheMonth(request):
+    if request.method == 'GET':
+        period = Calendar.objects.all()
         return render(request, 'calendar.html', {'period': period})
     elif request.method == 'POST':
         data = json.loads(request.body)
@@ -106,7 +164,7 @@ def timeOfTheMonth(request):
         # Updating an existing event
         Calendar.objects.filter(id=period_id).update(is_pinned=data['is_pinned'])
         return JsonResponse({"status": "success"})
-
+'''
 
 
 '''

@@ -12,9 +12,12 @@
     <div id="calendar"></div>
 
     <script>
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
         document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+        var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         events: '/MenaApp/calendar/',
         editable: true,
@@ -22,7 +25,7 @@
         select: function(info) {
             var title = prompt("Start of period:");
             if (title) {
-                $.ajax({
+                $.ajaxSetup({
                     url: '/MenaApp/calendar/',
                     type: 'POST',
                     data: JSON.stringify({
@@ -36,7 +39,12 @@
                         // Save the event ID for later updates
                         info.event.id = data.id;
                         calendar.refetchEvents();
-                    }
+                    },
+                    beforeSend: function(xhr, settings) {
+                        if (!this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+                        }
+                     }
                 });
             }
             calendar.unselect();
