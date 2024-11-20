@@ -284,23 +284,14 @@
     </head>
     <body>
         <div class="sidenav">
-<<<<<<< HEAD
-            <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'forum' %}">Forum</a>
-            <a href="{% url 'calendar_view' %}">Calendar</a>
-            <a href="{% url 'period_tracker' %}">Period</a>
-            <!--<a href="{% url 'time_of_the_month' %}">Calendar(View)</a>-->
-            <hr style="border: 1px solid #8232EF;">
-            <a href="/MenaApp/settings">Settings</a>
-            <hr style="border: 1px solid #8232EF;">
-=======
             <img src="{% static 'images/mena.png' %}" alt="Mena" style="margin: 20px;">
             <a href="{% url 'home' %}"><img src="{% static 'images/home.png' %}" alt="Home" style="width:20px;height:20px;">Home</a>
             <a href="{% url 'forum' %}"><img src="{% static 'images/forum.png' %}" alt="Forum" style="width:20px;height:20px;">Forum</a>
+            <a href="{% url 'calendar_view' %}">Calendar</a>
+            <a href="{% url 'period_tracker' %}">Period</a>
             <hr style="border: 1px solid #8d52de; margin: 10px;">
             <a href="/MenaApp/settings"><img src="{% static 'images/settings.png' %}" alt="Settings" style="width:20px;height:20px;">Settings</a>
             <hr style="border: 1px solid #8d52de; margin: 10px;">
->>>>>>> 30651af635db446d0a735d471a9be55b0d6722e3
             {% if user.is_authenticated %}
                 <form method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
