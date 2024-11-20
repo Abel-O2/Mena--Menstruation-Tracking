@@ -12,11 +12,6 @@ Forum
         <div class="forum-posts">
             {% for post in posts %}
             <div class="posts-container">
-                <h2 style="color: #5e3a8f; font-weight: bold;">{{ post.title }}</h2>
-                <p style="font-size: 1em; color: #5e3a8f; margin: 0;">{{ post.userID.username }}</p>
-                <p style="margin-top: 10px; line-height: 1.5; color: #333;">{{ post.content }}</p>
-                <input type="text" placeholder="Comment here..." style="width: 100%; padding: 10px; border: 1px solid #d3cce3; border-radius: 5px; margin-top: 10px;">
-
                 {% if post.userID == request.user %}
                 <div class="post-options" style="position: relative; display: inline-block; float: right;">
                     <button class="options-btn" onclick="toggleOptions('options-{{ post.id }}')">
@@ -28,6 +23,10 @@ Forum
                     </div>
                 </div>
                 {% endif %}
+                <h2 style="color: #5e3a8f; font-weight: bold;">{{ post.title }}</h2>
+                <p style="font-size: 1em; color: #5e3a8f; margin: 0;">{{ post.userID.username }}</p>
+                <p style="margin-top: 10px; line-height: 1.5; color: #333;">{{ post.content }}</p>
+                <input type="text" placeholder="Comment here..." style="width: 100%; padding: 10px; border: 1px solid #d3cce3; border-radius: 5px; margin-top: 10px;">
                 
             </div>
             {% endfor %}
