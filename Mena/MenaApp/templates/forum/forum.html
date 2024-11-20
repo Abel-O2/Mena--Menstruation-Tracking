@@ -15,7 +15,7 @@ Forum
                 {% if post.userID == request.user %}
                 <div class="post-options" style="position: relative; display: inline-block; float: right;">
                     <button class="options-btn" onclick="toggleOptions('options-{{ post.id }}')">
-                        &#x22EE;
+                        ⋮
                     </button>
                     <div id="options-{{ post.id }}" class="options-menu" style="display: none; position: absolute; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 5px; padding: 10px; z-index: 100;">
                         <a href="{% url 'edit_post' post.id %}" style="display: block; margin-bottom: 5px;">Edit</a>
