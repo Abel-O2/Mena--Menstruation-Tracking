@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RegisterForm, PeriodForm
 from django.shortcuts import render, redirect
@@ -15,12 +16,12 @@ from .forms import SymptomsForm, PostsForm, CalendarForm
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django import forms
-from .models import CyclePhase
+from MenaApp.models import CyclePhase, Lesson
 
 # Create your views here.
 @login_required(login_url='/login/')
 def home(request):
-    return render(request, "auth/home.html")
+    return render(request, "womendashboard/period_tracker.html")
 
 def register(request):
     if request.method == "POST":
@@ -86,16 +87,13 @@ class SimulatedDayForm(forms.Form):
     )
 
 
+
 @login_required
 def period_tracker(request):
     user_period = Period.objects.filter(user=request.user).first()
-    user_mood = Mood.objects.filter(user=request.user, date=date.today()).first()
     simulated_day = None
-
-    #current_phase = CyclePhase.objects.filter(start_day__lte=current_day, end_day__gte=current_day).first()
-    current_phase =None
-    
-    symptoms_list = []
+    current_phase = None
+    lessons = []
 
     if request.method == 'POST':
         form = SimulatedDayForm(request.POST)
@@ -104,32 +102,34 @@ def period_tracker(request):
     else:
         form = SimulatedDayForm()
 
-    # Determine the day in the cycle
     actual_day = (date.today() - user_period.start_date).days % user_period.cycle_length if user_period else 1
     current_day = simulated_day or actual_day
 
-    # Fetch the current phase based on the day
     current_phase = CyclePhase.objects.filter(start_day__lte=current_day, end_day__gte=current_day).first()
 
-    # Prepare symptoms list if phase exists
     if current_phase:
         symptoms_list = [symptom.strip() for symptom in current_phase.symptoms.split(',')]
+        moods = current_phase.mood.split(",")
+        random_mood = random.choice(moods).strip()
+        lessons = Lesson.objects.filter(phase=current_phase.name.lower())
     else:
-        symptoms_list = ["No symptoms available for this phase."]
-
+        symptoms_list = ["No symptoms available."]
+        mood = "No mood information available."
+    
     context = {
         'user': request.user,
         'period': user_period,
-        'mood': user_mood,
         'today': date.today(),
         'simulated_day': simulated_day,
         'actual_day': actual_day,
         'current_phase': current_phase,
         'symptoms_list': symptoms_list,
+        'mood': random_mood,
+        'lessons': lessons,
         'form': form,
-        'current_phase': current_phase,
     }
     return render(request, 'womendashboard/period_tracker.html', context)
+
 
 
 def edit_period(request, period_id):
@@ -139,7 +139,7 @@ def edit_period(request, period_id):
         form = PeriodForm(request.POST, instance=period)
         if form.is_valid():
             form.save()
-            return redirect('period_tracker')  # Redirect to period tracker page or another page after saving
+            return redirect('period_tracker')
     else:
         form = PeriodForm(instance=period)
 
@@ -148,28 +148,7 @@ def edit_period(request, period_id):
         'period': period
     }
     return render(request, 'womendashboard/edit_period.html', context)
-class SymptomsView(View):
-    def get(self, request):
-        symptoms = Symptoms.objects.all()  # Get all symptoms
-        form = SymptomsForm()  # Create an empty form
-        context = {
-            'symptoms': symptoms,
-            'form': form,
-        }
-        return render(request, 'symptoms.html', context)
 
-    def post(self, request):
-        form = SymptomsForm(request.POST)  # Get data from the form
-        if form.is_valid():
-            form.save()  # Save the new symptom
-            return redirect('phase_symptoms')  # Redirect to the same page
-        else:
-            symptoms = Symptoms.objects.all()  # Get existing symptoms again if form is invalid
-            context = {
-                'symptoms': symptoms,
-                'form': form,
-            }
-            return render(request, 'symptoms.html', context)
 
 def calendar_view(request):
     return render(request, 'calendar.html')

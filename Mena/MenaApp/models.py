@@ -35,10 +35,26 @@ class CyclePhase(models.Model):
     start_day = models.IntegerField()
     end_day = models.IntegerField()
     symptoms = models.TextField()
-    description = models.TextField(null=True, blank=True)  # Allow null and blank
+    description = models.TextField(null=True, blank=True)
+    mood = models.TextField()
 
     def __str__(self):
         return self.name
+    
+class Lesson(models.Model):
+    PHASE_CHOICES = [
+        ('menstruation', 'Menstruation'),
+        ('follicular', 'Follicular'),
+        ('ovulation', 'Ovulation'),
+        ('luteal', 'Luteal'),
+    ]
+
+    phase = models.CharField(max_length=50, choices=PHASE_CHOICES)
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+
+    def __str__(self):
+        return f"{self.phase}: {self.title}"
 
 
 class Comment(models.Model):
@@ -56,8 +72,6 @@ class Symptoms(models.Model):
     def __str__(self):
         return self.phase
     
-
-
 
 class Calendar(models.Model):
     title = models.CharField(max_length=200)
