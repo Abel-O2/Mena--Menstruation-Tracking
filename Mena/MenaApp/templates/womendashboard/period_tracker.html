@@ -1,49 +1,79 @@
 {% extends "index/base.html" %}
-
+{% load static %}
 {% block title %}
-Login
+Period Tracker
 {% endblock %}
 
 {% block content %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <title>Period Tracker</title>
-    <!-- Link the CSS file -->
-    <!--<link rel="stylesheet" href="{% static 'css/style.css' %}">-->
-</head>
-<body>
-    <div class="content">
-        <header>
-            <h2>Welcome Back, {{ user.username }}</h2>
-        </header>
-        <div class="main">
-            <div class="calendar">
-                <p>{{ today }}</p>
-                <!-- Placeholder for a calendar -->
-                <div class="calendar-box">Calendar Widget</div>
-            </div>
-            <div class="period-info">
-                <!-- Period information here -->
-            </div>
-            <div class="mood">
-                <h4>Today You Might Be Feeling:</h4>
-                <p>{{ mood.mood }}</p>
-            </div>
-            <div class="lessons">
-                <h4>Menstruation Lessons</h4>
-                <ul>
-                    <li>Ovulation is a phase of the menstrual cycle...</li>
-                    <li>It generally occurs about two weeks...</li>
-                    <li>Most ovulation predictor kits work by...</li>
-                    <li>Some women who aren’t ovulating...</li>
-                </ul>
-            </div>
-        </div>
+<div style="background-color: #C39EF6; padding: 20px; text-align: left;">
+    <h1 style="margin: 0; font-size: 24px; color: white;">Welcome Back, {{ user.username }}</h1>
+</div>
+
+<div class="main" style="display: flex; flex-wrap: wrap; gap: 20px; padding: 20px;">
+    <!-- Calendar Section -->
+    <div class="calendar" style="width: 20%; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); text-align: center;">
+        <h3>Today: {{ today }}</h3>
+        <p><strong>Calendar Placeholder</strong></p>
     </div>
-</body>
-</html>
+
+    <!-- Period Information Section -->
+    <div class="period-info" style="width: 25%; background-color: #C89FF3; color: white; padding: 15px; border-radius: 8px; text-align: center;">
+        <h2>Current Day</h2>
+        <p style="font-size: 2em; margin: 10px 0;">
+            {% if simulated_day %}
+                Simulated Day: {{ simulated_day }}
+            {% else %}
+                Actual Day: {{ actual_day }}
+            {% endif %}
+        </p>
+
+        <!-- Simulation Form -->
+        <form method="POST" style="margin-top: 10px;">
+            {% csrf_token %}
+            <label for="id_simulated_day" style="font-weight: bold;">Simulate Your Day</label>
+            {{ form.simulated_day }}
+            <button type="submit" style="margin-top: 10px; padding: 8px 16px; background-color: #A67CC9; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Simulate
+            </button>
+        </form>
+    </div>
+
+    <!-- Current Phase Section -->
+    <div class="phase-info" style="width: 25%; background-color: #E6C7FF; padding: 15px; border-radius: 8px; text-align: center;">
+        <h2>Current Phase</h2>
+        {% if current_phase %}
+            <p style="font-size: 1.2em; font-weight: bold;">{{ current_phase.name }}</p>
+            <p>{{ current_phase.description }}</p>
+            <h4>Symptoms:</h4>
+            <ul style="text-align: left;">
+                {% for symptom in symptoms_list %}
+                    <li>{{ symptom }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Phase information not available.</p>
+        {% endif %}
+    </div>
+    
+    
+
+    <!-- Mood Section -->
+    <div class="mood" style="width: 100%; background-color: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); text-align: center;">
+        <h4 style="margin: 0;">Today You Might Be Feeling:</h4>
+        <p style="font-size: 2em; color: #444; margin-top: 10px;">{{ mood }}</p>
+    </div>
+
+    <!-- Menstruation Lessons Section -->
+    <div class="lessons" style="width: 25%; background-color: #E6C7FF; padding: 15px; border-radius: 8px;">
+        <h4 style="margin-top: 0;">Menstruation Lessons</h4>
+        <ul style="list-style: none; padding: 0; color: #333;">
+            {% for lesson in menstruation_lessons %}
+                <li>{{ lesson }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
 {% endblock %}

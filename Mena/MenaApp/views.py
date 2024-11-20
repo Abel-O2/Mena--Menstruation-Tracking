@@ -14,6 +14,8 @@ from .models import Calendar
 from .forms import SymptomsForm, PostsForm, CalendarForm
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django import forms
+from .models import CyclePhase
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -75,19 +77,60 @@ def logout_view(request):
     return redirect('/')
 
 
+# Temporary form for simulation
+class SimulatedDayForm(forms.Form):
+    simulated_day = forms.IntegerField(
+        label="Simulated Day",
+        required=False,
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter day (e.g., 1, 2, 3)', 'style': 'width: 100%; padding: 5px; margin-top: 5px; border-radius: 4px;'})
+    )
+
+
 @login_required
 def period_tracker(request):
-    # Example data; replace with actual period data for logged-in user
     user_period = Period.objects.filter(user=request.user).first()
     user_mood = Mood.objects.filter(user=request.user, date=date.today()).first()
+    simulated_day = None
+
+    #current_phase = CyclePhase.objects.filter(start_day__lte=current_day, end_day__gte=current_day).first()
+    current_phase =None
+    
+    symptoms_list = []
+
+    if request.method == 'POST':
+        form = SimulatedDayForm(request.POST)
+        if form.is_valid():
+            simulated_day = form.cleaned_data.get('simulated_day')
+    else:
+        form = SimulatedDayForm()
+
+    # Determine the day in the cycle
+    actual_day = (date.today() - user_period.start_date).days % user_period.cycle_length if user_period else 1
+    current_day = simulated_day or actual_day
+
+    # Fetch the current phase based on the day
+    current_phase = CyclePhase.objects.filter(start_day__lte=current_day, end_day__gte=current_day).first()
+
+    # Prepare symptoms list if phase exists
+    if current_phase:
+        symptoms_list = [symptom.strip() for symptom in current_phase.symptoms.split(',')]
+    else:
+        symptoms_list = ["No symptoms available for this phase."]
 
     context = {
         'user': request.user,
         'period': user_period,
         'mood': user_mood,
         'today': date.today(),
+        'simulated_day': simulated_day,
+        'actual_day': actual_day,
+        'current_phase': current_phase,
+        'symptoms_list': symptoms_list,
+        'form': form,
+        'current_phase': current_phase,
     }
     return render(request, 'womendashboard/period_tracker.html', context)
+
 
 def edit_period(request, period_id):
     period = get_object_or_404(Period, id=period_id)

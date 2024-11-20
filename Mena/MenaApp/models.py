@@ -22,6 +22,25 @@ class Mood(models.Model):
 
     def __str__(self):
         return f"{self.mood} on {self.date}"
+
+class CyclePhase(models.Model):
+    PHASE_CHOICES = [
+        ('menstruation', 'Menstruation'),
+        ('follicular', 'Follicular'),
+        ('ovulation', 'Ovulation'),
+        ('luteal', 'Luteal'),
+    ]
+
+    name = models.CharField(max_length=50, choices=PHASE_CHOICES)
+    start_day = models.IntegerField()
+    end_day = models.IntegerField()
+    symptoms = models.TextField()
+    description = models.TextField(null=True, blank=True)  # Allow null and blank
+
+    def __str__(self):
+        return self.name
+
+
 class Comment(models.Model):
     postID = models.ForeignKey(Post, on_delete=models.CASCADE)
     userID = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -36,6 +55,8 @@ class Symptoms(models.Model):
 
     def __str__(self):
         return self.phase
+    
+
 
 
 class Calendar(models.Model):
