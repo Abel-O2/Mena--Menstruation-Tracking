@@ -1,25 +1,19 @@
-<<<<<<< HEAD
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RegisterForm, PeriodForm
-=======
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import RegisterForm
->>>>>>> eadd848fada6845d4b234a6b0c7b7e9124a14556
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Post
-<<<<<<< HEAD
 from .models import Period, Mood
 from datetime import date
-=======
 from .models import Symptoms
 from .models import Calendar
 from .forms import SymptomsForm, PostsForm, CalendarForm
 import json
 from django.views.decorators.csrf import csrf_exempt
->>>>>>> eadd848fada6845d4b234a6b0c7b7e9124a14556
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -57,7 +51,6 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
-<<<<<<< HEAD
 
 @login_required
 def period_tracker(request):
@@ -89,7 +82,6 @@ def edit_period(request, period_id):
         'period': period
     }
     return render(request, 'womendashboard/edit_period.html', context)
-=======
 class SymptomsView(View):
     def get(self, request):
         symptoms = Symptoms.objects.all()  # Get all symptoms
@@ -232,4 +224,3 @@ def timeOfTheMonth(request):
             return JsonResponse({"error": "Missing 'id' or 'is_pinned' parameter"}, status=400)
         Calendar.objects.filter(id=period_id).update(is_pinned=data['is_pinned'])
         return JsonResponse({"status": "success"})'''
->>>>>>> eadd848fada6845d4b234a6b0c7b7e9124a14556
