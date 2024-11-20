@@ -43,6 +43,11 @@ def post_forum(request):
         form = PostsForm()
     return render(request, "forum/post.html", {"form": form})
 
+def delete_forum(request, id):
+    post = Post.objects.get(id=id)
+    post.delete()
+    return redirect('forum')
+
 def logout_view(request):
     logout(request)
     return redirect('/')
