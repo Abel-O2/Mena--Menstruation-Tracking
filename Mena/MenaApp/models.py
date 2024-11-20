@@ -9,6 +9,19 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class Period(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    day = models.IntegerField()
+
+class Mood(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField()
+    mood = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.mood} on {self.date}"
 class Comment(models.Model):
     postID = models.ForeignKey(Post, on_delete=models.CASCADE)
     userID = models.ForeignKey(User, on_delete=models.CASCADE)

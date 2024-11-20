@@ -1,0 +1,161 @@
+/* General Style */
+body {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h2, h4 {
+    color: #000;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #A67CC9;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 20px;
+}
+
+.sidebar h2 {
+    font-size: 24px;
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+header {
+    background-color: #C89FF3;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+header h2 {
+    color: #333;
+    margin: 0;
+}
+
+.main {
+    display: flex;
+    gap: 20px;
+    padding-top: 20px;
+}
+
+.calendar {
+    width: 20%;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.calendar-box {
+    margin-top: 10px;
+    color: #555;
+}
+
+.period-info {
+    width: 25%;
+    background-color: #C89FF3;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.period-info p {
+    font-size: 2em;
+    margin: 0;
+}
+
+.period-info button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #A67CC9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.period-info button:hover {
+    background-color: #8b57b7;
+}
+
+.mood {
+    width: 100%;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 20px;
+}
+
+.mood h4 {
+    margin: 0;
+}
+
+.mood p {
+    font-size: 1.8em;
+    color: #444;
+    margin-top: 10px;
+}
+
+.lessons {
+    width: 25%;
+    background-color: #E6C7FF;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.lessons h4 {
+    color: #333;
+    margin-top: 0;
+}
+
+.lessons ul {
+    list-style: none;
+    padding: 0;
+    color: #333;
+}
+
+.lessons ul li {
+    padding: 5px 0;
+}
+
+.lessons img {
+    margin-top: 15px;
+    max-width: 100%;
+    border-radius: 8px;
+}
