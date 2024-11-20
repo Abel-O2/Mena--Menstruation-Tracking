@@ -31,6 +31,7 @@ def get_forum(request):
     posts = Post.objects.all()
     return render(request, "forum/forum.html", {"posts": posts})
 
+@login_required(login_url='/login/')
 def post_forum(request):
     if request.method == "POST":
         form = PostsForm(request.POST)
@@ -43,10 +44,27 @@ def post_forum(request):
         form = PostsForm()
     return render(request, "forum/post.html", {"form": form})
 
+@login_required(login_url='/login/')
 def delete_forum(request, id):
     post = Post.objects.get(id=id)
-    post.delete()
+    if post.userID == request.user:
+        post.delete()
     return redirect('forum')
+
+@login_required(login_url='/login/')
+def edit_forum(request, id):
+    post = Post.objects.get(id=id)
+
+    if post.userID == request.user:
+        if request.method == "POST":
+            form = PostsForm(request.POST, instance=post)
+            if form.is_valid():
+                form.save()
+                return redirect('forum')
+        else:
+            form = PostsForm(instance=post)
+
+    return render(request, "forum/edit_post.html", {"form": form})
 
 def logout_view(request):
     logout(request)

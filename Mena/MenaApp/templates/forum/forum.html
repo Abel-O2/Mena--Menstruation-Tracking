@@ -6,7 +6,7 @@ Forum
 {% endblock %}
 
 {% block content %}
-    <h1 style="padding-left: 20px; padding-top: 25px; padding-bottom: 25px; margin-bottom: 50px; background-color: #c39ef6;">Discussion Forum</h1>
+    <h1 style="padding-left: 20px; padding-top: 25px; padding-bottom: 25px; margin-bottom: 50px; margin-right: 0; background-color: #c39ef6;">Discussion Forum</h1>
     <div style="display: flex; gap: 20px; margin-bottom: 20px;">
         
         <div class="forum-posts">
@@ -16,8 +16,28 @@ Forum
                 <p style="font-size: 1em; color: #5e3a8f; margin: 0;">{{ post.userID.username }}</p>
                 <p style="margin-top: 10px; line-height: 1.5; color: #333;">{{ post.content }}</p>
                 <input type="text" placeholder="Comment here..." style="width: 100%; padding: 10px; border: 1px solid #d3cce3; border-radius: 5px; margin-top: 10px;">
+
+                {% if post.userID == request.user %}
+                <div class="post-options" style="position: relative; display: inline-block; float: right;">
+                    <button class="options-btn" onclick="toggleOptions('options-{{ post.id }}')">
+                        &#x22EE;
+                    </button>
+                    <div id="options-{{ post.id }}" class="options-menu" style="display: none; position: absolute; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 5px; padding: 10px; z-index: 100;">
+                        <a href="{% url 'edit_post' post.id %}" style="display: block; margin-bottom: 5px;">Edit</a>
+                        <a href="{% url 'delete_post' post.id %}" style="display: block; color: red;">Delete</a>
+                    </div>
+                </div>
+                {% endif %}
+                
             </div>
             {% endfor %}
+            <script>
+                // Toggle the visibility of the options menu
+                function toggleOptions(id) {
+                    const menu = document.getElementById(id);
+                    menu.style.display = menu.style.display === 'none' || !menu.style.display ? 'block' : 'none';
+                }
+            </script>   
         </div>
         <div class="forum-rules-container">
             <h1>Welcome to the Mena Forum</h1>
