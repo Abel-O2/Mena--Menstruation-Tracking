@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptoms</title>
+</head>
+<body>
+    <h1>Potential Symptoms</h1>
+    <ul>
+        {% for symptom in symptoms %}
+        <H3>{{symptom.phase}}</H3>
+            {% if symptom.phase == 'Menstrual' %}
+                <li>Cramps</li>
+                <li>Tender breasts</li>
+                <li>Bloating</li>
+                <li>Mood swings</li>
+                <li>Irritability</li>
+                <li>Headaches</li>
+                <li>Tiredness</li>
+                <li>Low back pain</li>
+            {% elif symptom.phase == 'Ovulation' %}
+                <li>Slick and slippery vaginal discharge (like egg white)</li>
+                <li>Abdominal pain, often on one side of the tummy</li>
+                <li>Tender breasts</li>
+                <li>Change in Basal Body Temperature</li>
+            {% elif symptom.phase == 'Luteal' %}
+                <li>Mood changes</li>
+                <li>Tender breasts</li>
+                <li>Bloating</li>
+                <li>Breaking out or acne</li>
+                <li>Changes in your appetite</li>
+            {% else %}
+                <li>IDK</li>
+            {% endif %}
+        {% empty %}
+            <li>No symptoms available.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Enter Phase</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

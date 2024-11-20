@@ -5,13 +5,34 @@ Register
 {% endblock %}
 
 {% block content %}
-    <body>
-        <div>
-            <form method="POST">
-                {% csrf_token %}
-                {{form}}
-                <button type="submit">Register</button>
-            </form>
-        </div>
-    </body>
+<div class="register-container">
+    <div class="title">Sign Up</div>
+    <div class="subtitle">Create an Account</div>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        {{ form.username }}
+        {{ form.email }}
+
+        {{ form.birthdate.label_tag }}
+        {{ form.birthdate }}
+
+        {{ form.password1 }}
+        {{ form.password1.errors }}
+        <!--<small>{{ form.password1.help_text }}</small>-->
+
+        {{ form.password2 }}
+        {{ form.password2.errors }}
+        <!--<small>{{ form.password2.help_text }}</small>-->
+
+        <button type="submit" class="register-button">Sign Up</button>
+    </form>
+
+    <div>
+        <span>Already have an account?</span>
+        <a href="{% url 'login' %}" class="sign-in">Sign In</a>
+    </div>
+</div>
 {% endblock %}

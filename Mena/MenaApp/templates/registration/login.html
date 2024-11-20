@@ -5,11 +5,24 @@ Login
 {% endblock %}
 
 {% block content %}
-    <h4>Login</h4>
+<div class="login-container">
+    <div class="title">Login</div>
+    <div class="subtitle">Welcome back,</div>
+
     <form method="POST">
         {% csrf_token %}
-        {{form}}
-        <button type="submit">Login</button>
-        <p>Don't have an account? <a href="{% url 'register' %}">Sign up</a></p>
+        
+        <input type="text" name="username" placeholder="Username" class="input-field" required>
+        <input type="password" name="password" placeholder="Password" class="input-field" required>
+        
+        <a href="{% url 'password_reset' %}" class="forgot-account">Forgot account?</a>
+        
+        <button type="submit" class="login-button">Login</button>
     </form>
+
+    <div>
+        <span>Don’t have an account?</span>
+        <a href="{% url 'register' %}" class="sign-up">Sign Up</a>
+    </div>
+</div>
 {% endblock %}
