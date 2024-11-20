@@ -9,7 +9,6 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-<<<<<<< HEAD
 class Period(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     start_date = models.DateField()
@@ -23,7 +22,6 @@ class Mood(models.Model):
 
     def __str__(self):
         return f"{self.mood} on {self.date}"
-=======
 class Comment(models.Model):
     postID = models.ForeignKey(Post, on_delete=models.CASCADE)
     userID = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -51,4 +49,3 @@ class Calendar(models.Model):
         return self.title
 
 
->>>>>>> eadd848fada6845d4b234a6b0c7b7e9124a14556

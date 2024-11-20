@@ -2,11 +2,8 @@ from django import forms
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-<<<<<<< HEAD
 from .models import Period
-=======
 from .models import Symptoms, Post, Calendar
->>>>>>> eadd848fada6845d4b234a6b0c7b7e9124a14556
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True,widget=forms.EmailInput(attrs={
@@ -32,14 +29,12 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "birthdate", "password1", "password2"]
-<<<<<<< HEAD
 
 class PeriodForm(forms.ModelForm):
     class Meta:
         model = Period
         fields = ['start_date', 'end_date', 'day']
 
-=======
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'input-field',
@@ -76,4 +71,3 @@ class CalendarForm(forms.ModelForm):
             'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
->>>>>>> eadd848fada6845d4b234a6b0c7b7e9124a14556
