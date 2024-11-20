@@ -6,6 +6,10 @@ from .models import Period
 from .models import Symptoms, Post, Calendar
 
 class RegisterForm(UserCreationForm):
+    username = forms.EmailField(required=True,widget=forms.EmailInput(attrs={
+        'class': 'input-field',
+        'placeholder': 'Username'
+    }))
     email = forms.EmailField(required=True,widget=forms.EmailInput(attrs={
         'class': 'input-field',
         'placeholder': 'Email Address'
