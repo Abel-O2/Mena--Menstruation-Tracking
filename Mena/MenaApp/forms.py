@@ -67,11 +67,14 @@ class SymptomsForm(forms.ModelForm):
         model = Symptoms
         fields = ['phase']
 
-class CalendarForm(forms.ModelForm):
-    class Meta:
-        model = Calendar
-        fields = ['title', 'description', 'start_time', 'end_time', 'is_pinned']
-        widgets = {
-            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-        }
+class CalendarPinForm(forms.Form):
+    day = forms.IntegerField(min_value=1, max_value=31, label="Day")
+    is_pinned = forms.BooleanField(required=False, label="Pin this day")
+
+class PinForm(forms.Form):
+    day = forms.IntegerField(
+        min_value=1,
+        max_value=31,
+        label="Day to Pin/Unpin",
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter a day'}),
+    )

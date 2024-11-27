@@ -2,34 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Calendar</title>
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ month_name }} {{ year }} Calendar</title>
     <style>
-         body {
-            background-color:#6200E8;
+        body {
+            background-color: #9959f0;
             color: black;
             font-family: Arial, sans-serif;
-        }
-        
-        #calendar {
-            background-color: #f4f4f4; /* light gray */
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 0;
+            padding: 0;
         }
 
-        .fc-event {
-            background-color: #add8e6; /* light blue for events */
+        h1 {
+            text-align: center;
             color: black;
+            margin-top: 20px;
         }
 
-        .fc-daygrid-day:hover {
-            background-color: #dcdcdc; /* light gray hover */
-            cursor: pointer;
+        h2 {
+            text-align: center;
+            color: white;
         }
 
         h2 a {
@@ -43,77 +35,117 @@
             text-decoration: none;
         }
 
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); /* 7 columns for days of the week */
+            gap: 10px;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+
+        .day {
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .day.empty {
+            background-color: #f5f5f5; /* light gray for empty slots */
+        }
+
+        .day.pinned {
+            background-color: #76c7c0; /* teal for pinned days */
+            color: white;
+        }
+
+        .day:hover {
+            background-color: #dcdcdc; /* light gray hover */
+            cursor: pointer;
+        }
+
+        .calendar-navigation {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .calendar-navigation a {
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .calendar-navigation a:hover {
+            color: blueviolet;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .form-container form {
+            margin: 0 10px;
+            display: inline-block;
+        }
+
+        .form-container button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6200E8;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container button:hover {
+            background-color: blueviolet;
+        }
+
     </style>
 </head>
 <body>
-    
-    <h2> 
-    <a href="{% url 'home' %}">Home</a>
+
+    <h2>
+        <a href="{% url 'home' %}">Home</a>
     </h2>
-    
-    <div id="calendar"></div>
+    <h1><strong>{{ month_name }} {{ year }} Calendar</strong></h1>
 
-    <script>
-        function getCSRFToken() {
-            return document.querySelector('[name=csrfmiddlewaretoken]').value;
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: '/MenaApp/calendar/',
-        editable: true,
-        selectable: true,
-        select: function(info) {
-            var title = prompt("Start of period:");
-            if (title) {
-                $.ajaxSetup({
-                    url: '/MenaApp/calendar/',
-                    type: 'POST',
-                    data: JSON.stringify({
-                        title: title,
-                        start: info.startStr,
-                        end: info.endStr,
-                        is_pinned: false  
-                    }),
-                    contentType: 'application/json',
-                    success: function(data) {
-                        // Save the event ID for later updates
-                        info.event.id = data.id;
-                        calendar.refetchEvents();
-                    },
-                    beforeSend: function(xhr, settings) {
-                        if (!this.crossDomain) {
-                            xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
-                        }
-                     }
-                });
-            }
-            calendar.unselect();
-        },
-        eventClick: function(info) {
-            var isPinned = confirm("Do you want to pin this day?");
-            info.event.setExtendedProp('is_pinned', isPinned);
-            $.ajax({
-                url: '/MenaApp/calendar/',
-                type: 'PATCH',
-                data: JSON.stringify({
-                    id: info.event.id,
-                    is_pinned: isPinned
-                }),
-                contentType: 'application/json',
-                success: function() {
-                    calendar.refetchEvents();
-                }
-            });
-        },
-        eventRender: function(info) {
-            console.log(info.event.title);
-        }
-    });
-    calendar.render();
-});
+    <div class="calendar-navigation">
+        <a href="{% url 'calendar_view' year=previous_year month=previous_month %}">&lt; Previous Month</a>
+        <a href="{% url 'calendar_view' year=next_year month=next_month %}">Next Month &gt;</a>
+    </div>
 
-    </script>
+    <div class="calendar">
+        {% for day in days %}
+            <div class="day {% if day == 0 %}empty{% endif %} {% if day in pinned_days %}pinned{% endif %}">
+                {% if day != 0 %}
+                    {{ day }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            <label for="day">Enter day to Pin/Unpin:</label>
+            <input type="number" name="day" min="1" max="31" required>
+            <button type="submit" name="pin">Pin</button>
+            <button type="submit" name="delete">Unpin</button>
+        </form>
+    </div>
+
+    <div class="calendar-navigation">
+        <a href="{% url 'calendar_view' year=year|add:-1 month=month %}">&lt;&lt; Previous Year</a>
+        <a href="{% url 'calendar_view' year=year|add:1 month=month %}">Next Year &gt;&gt;</a>
+    </div>
+
 </body>
 </html>

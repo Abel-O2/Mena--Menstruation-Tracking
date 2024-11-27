@@ -12,11 +12,13 @@ from .models import Period, Mood
 from datetime import date
 from .models import Symptoms
 from .models import Calendar
-from .forms import SymptomsForm, PostsForm, CalendarForm
+from .forms import SymptomsForm, PostsForm, CalendarPinForm, PinForm
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django import forms
 from MenaApp.models import CyclePhase, Lesson
+import calendar
+from datetime import date, timedelta
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -150,122 +152,60 @@ def edit_period(request, period_id):
     return render(request, 'womendashboard/edit_period.html', context)
 
 
-def calendar_view(request):
-    return render(request, 'calendar.html')
 
-@csrf_exempt
-def timeOfTheMonth(request):
-    if request.method == 'GET':
-        period = Calendar.objects.all()
-        events = [
-            {
-                'id': event.id,
-                'title': event.title,
-                'start': event.start_time.isoformat(),
-                'end': event.end_time.isoformat(),
-                'is_pinned': event.is_pinned
-            } for event in period
-        ]
-        return JsonResponse(events, safe=False)
+def calendar_view(request, year=None, month=None):
+    if year is None or month is None:
+        today = date.today()
+        year = today.year
+        month = today.month
+
+    #Dyas of the month
+    cal = calendar.Calendar()
+    month_days = cal.itermonthdays(year, month)
     
-    elif request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            title = data.get('title', 'Untitled Event')
-            start_time = data.get('start')
-            end_time = data.get('end')
-            is_pinned = data.get('is_pinned', False)
+    #Get code for the days in the current month
+    pinned_days = Calendar.objects.filter(year=year, month=month).values_list('day', flat=True)
 
-            if not start_time or not end_time:
-                return JsonResponse({"error": "Start time and end time are required."}, status=400)
-            
-            # Creating a new event
-            event = Calendar.objects.create(
-                title=title,
-                start_time=start_time,
-                end_time=end_time,
-                is_pinned=is_pinned
-            )
-            return JsonResponse({"id": event.id}, status=201)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format."}, status=400)
-
-    elif request.method == 'PATCH':
-        try:
-            data = json.loads(request.body)
-            period_id = data.get('id')
-            if not period_id or 'is_pinned' not in data:
-                return JsonResponse({"error": "Missing 'id' or 'is_pinned' parameter"}, status=400)
-            
-            # Updating an existing event
-            Calendar.objects.filter(id=period_id).update(is_pinned=data['is_pinned'])
-            return JsonResponse({"status": "success"})
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format."}, status=400)
+    #For the create and delete functions
+    if request.method == 'POST':
+        form = PinForm(request.POST)
+        if form.is_valid():
+            day = form.cleaned_data['day']
+            if 'delete' in request.POST:
+                Calendar.objects.filter(year=year, month=month, day=day).delete()
+            else:
+                for i in range(5):
+                    pin_date = date(year, month, day) + timedelta(days=i)
+                    Calendar.objects.update_or_create(
+                        year=pin_date.year,
+                        month=pin_date.month,
+                        day=pin_date.day,
+                        defaults={'is_pinned': True, 'pinned_date': pin_date}
+                    )
+        return redirect('calendar_view', year=year, month=month)
 
     else:
-        return JsonResponse({"error": "Method not allowed."}, status=405)
+        form = PinForm()
 
+    pinned_events = Calendar.objects.filter(year=year, month=month)
+    expired_days = [event.day for event in pinned_events if event.is_expired()]
 
-'''
-def calendar_view(request):
-    return render(request, 'calendar.html')
+    previous_month = (month - 1) if month > 1 else 12
+    previous_year = year if month > 1 else year - 1
+    next_month = (month + 1) if month < 12 else 1
+    next_year = year if month < 12 else year + 1
 
-@csrf_exempt
-def timeOfTheMonth(request):
-    if request.method == 'GET':
-        period = Calendar.objects.all()
-        return render(request, 'calendar.html', {'period': period})
-    elif request.method == 'POST':
-        data = json.loads(request.body)
-        title = data.get('title', 'Untitled Event')
-        start_time = data.get('start')
-        end_time = data.get('end')
-        is_pinned = data.get('is_pinned', False)
-        
-        if not start_time or not end_time:
-            return JsonResponse({"error": "Start time and end time are required."}, status=400)
-        
-        # Creating a new event
-        event = Calendar.objects.create(
-            title=title,
-            start_time=start_time,
-            end_time=end_time,
-            is_pinned=is_pinned
-        )
-        return JsonResponse({"id": event.id}, status=201)
-    
-    elif request.method == 'PATCH':
-        data = json.loads(request.body)
-        period_id = data.get('id')
-        if not period_id or 'is_pinned' not in data:
-            return JsonResponse({"error": "Missing 'id' or 'is_pinned' parameter"}, status=400)
-        
-        # Updating an existing event
-        Calendar.objects.filter(id=period_id).update(is_pinned=data['is_pinned'])
-        return JsonResponse({"status": "success"})
-'''
-
-
-'''
-@csrf_exempt 
-def timeOfTheMonth(request):
-    if request.method == 'GET':
-        period = Calendar.objects.all()
-        return render(request,'calendar.html',{'period':period})
-    elif request.method == 'POST':
-        data = json.loads(request.body)
-        mark = Calendar.objects.create(
-            title=data['title', 'Untitled Event'],
-            start_time=data['start',None],
-            end_time=data['end',None],
-            is_pinned=data.get('is_pinned', False)
-        )
-        return JsonResponse({"id": mark.id}, status=201)
-    elif request.method == 'POST':
-        data = json.loads(request.body)
-        period_id = data.get('id')
-        if period_id is None or 'is_pinned' not in data:
-            return JsonResponse({"error": "Missing 'id' or 'is_pinned' parameter"}, status=400)
-        Calendar.objects.filter(id=period_id).update(is_pinned=data['is_pinned'])
-        return JsonResponse({"status": "success"})'''
+    context = {
+        'year': year,
+        'month': month,
+        'month_name': calendar.month_name[month],
+        'days': list(month_days),
+        'pinned_days': pinned_days,
+        'expired_days': expired_days,
+        'form': form,
+        'previous_month': previous_month,
+        'previous_year': previous_year,
+        'next_month': next_month,
+        'next_year': next_year,
+    }
+    return render(request, 'calendar.html', context)

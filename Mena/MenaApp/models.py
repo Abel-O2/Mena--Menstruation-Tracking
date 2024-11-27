@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date,timedelta
 
 # Create your models here.
 class Post(models.Model):
@@ -79,8 +80,22 @@ class Calendar(models.Model):
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
     is_pinned = models.BooleanField(default=False)
+    year = models.IntegerField()
+    month = models.IntegerField()
+    day = models.IntegerField()
+    pinned_date = models.DateField(null=True, blank=True)  # Store the pinned date
 
     def __str__(self):
-        return self.title
+        return f"{self.title} - {self.year}/{self.month}/{self.day}"
 
+    def is_expired(self):
+        """Check if the 5 days have passed since pinning"""
+        if self.pinned_date:
+            return (date.today() - self.pinned_date).days > 5
+        return False
 
+    def get_pinned_days(self):
+        """Get the next 4 days after the pinned date"""
+        if self.pinned_date:
+            return [self.pinned_date + timedelta(days=i) for i in range(5)]
+        return []
