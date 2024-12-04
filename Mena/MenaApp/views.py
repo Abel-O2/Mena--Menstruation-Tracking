@@ -7,12 +7,12 @@ from .forms import RegisterForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import Post
+from .models import Post, Comment
 from .models import Period, Mood
 from datetime import date
 from .models import Symptoms
 from .models import Calendar
-from .forms import SymptomsForm, PostsForm, CalendarPinForm, PinForm
+from .forms import SymptomsForm, PostsForm, CalendarPinForm, PinForm, CommentForm
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django import forms
@@ -35,6 +35,7 @@ def register(request):
         form = RegisterForm()
     return render(request, "auth/register.html", {"form":form})
 
+# Post CRUD
 @login_required(login_url='/login/')
 def get_forum(request):
     posts = Post.objects.all()
@@ -74,6 +75,41 @@ def edit_forum(request, id):
             form = PostsForm(instance=post)
 
     return render(request, "forum/edit_post.html", {"form": form})
+
+# Comment CRUD
+@login_required
+def add_comment(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.userID = request.user
+            comment.postID = post
+            comment.save()
+            return redirect('forum')  # Redirect to your forum page or the post's detail page
+    else:
+        form = CommentForm()
+    return render(request, 'comment/add_comment.html', {'form': form, 'post': post})
+
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, userID=request.user)
+    if request.method == "POST":
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('forum')
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, 'comment/edit_comment.html', {'form': form})
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, userID=request.user)
+    if comment.userID == request.user:
+        comment.delete()
+    return redirect('forum')
 
 def logout_view(request):
     logout(request)

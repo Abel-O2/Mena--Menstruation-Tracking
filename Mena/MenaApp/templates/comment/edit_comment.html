@@ -1,0 +1,20 @@
+{% extends "index/base.html" %}
+{% block content %}
+<style>
+    body { 
+        height: 100vh; 
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif; 
+        margin: 0; 
+    }
+</style>
+<h1>Edit Comment</h1>
+<form method="post" class="form-container">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button">Update</button>
+    <a href="{% url 'forum' %}" class="button">Cancel</a>
+</form>
+{% endblock %}

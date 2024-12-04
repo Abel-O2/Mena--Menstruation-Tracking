@@ -3,13 +3,9 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Period
-from .models import Symptoms, Post, Calendar
+from .models import Symptoms, Post, Comment, Calendar
 
 class RegisterForm(UserCreationForm):
-    username = forms.EmailField(required=True,widget=forms.EmailInput(attrs={
-        'class': 'input-field',
-        'placeholder': 'Username'
-    }))
     email = forms.EmailField(required=True,widget=forms.EmailInput(attrs={
         'class': 'input-field',
         'placeholder': 'Email Address'
@@ -33,6 +29,13 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "birthdate", "password1", "password2"]
+
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'input-field',
+                'placeholder': 'Username'
+            }),
+        }
 
 class PeriodForm(forms.ModelForm):
     class Meta:
@@ -59,6 +62,17 @@ class PostsForm(forms.ModelForm):
             'content': forms.Textarea(attrs={ 
                 'class': 'text-field', 
                 'placeholder': 'Type Here...' 
+            }),
+        }
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment']
+        widgets = {
+            'comment': forms.Textarea(attrs={
+                'class': 'text-field',
+                'placeholder': 'Write your comment...'
             }),
         }
 
