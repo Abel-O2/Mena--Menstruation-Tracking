@@ -12,7 +12,7 @@ from .models import Period, Mood
 from datetime import date
 from .models import Symptoms
 from .models import Calendar
-from .forms import SymptomsForm, PostsForm, CalendarPinForm, PinForm, CommentForm
+from .forms import SymptomsForm, PostsForm, CalendarPinForm, PinForm, CommentForm, UserUpdateForm
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django import forms
@@ -34,6 +34,27 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, "auth/register.html", {"form":form})
+
+@login_required
+def profile_view(request):
+    user = request.user
+    if request.method == "POST":
+        form = UserUpdateForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = UserUpdateForm(instance=user)
+    return render(request, 'profile.html', {'form': form})
+
+@login_required
+def delete_account(request):
+    user = request.user
+    if request.method == "POST":
+        user.delete()
+        logout(request)
+        return redirect('login')
+    return redirect('login')
 
 # Post CRUD
 @login_required(login_url='/login/')

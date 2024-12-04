@@ -1,0 +1,50 @@
+{% extends 'index/base.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<style>
+    body { 
+        height: 100vh; 
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif; 
+        margin: 0; 
+    }
+</style>
+<div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+    <h1 style="text-align: center; margin-bottom: 20px;">My Profile</h1>
+    <!-- Save Changes Form -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        {{ form.username.label_tag }}
+        {{ form.username }}
+
+        {{ form.email.label_tag }}
+        {{ form.email }}
+
+        {{ form.birthdate.label_tag }}
+        {{ form.birthdate }}
+
+        {{ form.password1 }}
+        {{ form.password1.errors }}
+
+        {{ form.password2 }}
+        {{ form.password2.errors }}
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="submit" class="button" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Save Changes
+            </button>
+        </div>
+    </form>
+    <form method="post" action="{% url 'delete_account' %}" onsubmit="return confirm('Are you sure you want to delete your account?');" style="text-align: center; margin-top: 20px;">
+        {% csrf_token %}
+        <button class="button" type="submit" style="padding: 10px 20px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Delete Account
+        </button>
+    </form>
+</div>
+{% endblock %}

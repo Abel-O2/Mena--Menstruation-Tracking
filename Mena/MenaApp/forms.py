@@ -5,6 +5,49 @@ from django.contrib.auth.models import User
 from .models import Period
 from .models import Symptoms, Post, Comment, Calendar
 
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(attrs={
+            'class': 'input-field',
+            'placeholder': 'Email Address',
+        })
+    )
+    birthdate = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={
+            'class': 'input-field',
+            'placeholder': 'dd/mm/yyyy',
+            'type': 'date',
+        })
+    )
+    password1 = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'input-field',
+            'placeholder': 'Password',
+        })
+    )
+    password2 = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'input-field',
+            'placeholder': 'Confirm Password',
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "birthdate", "password1", "password2"]
+
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'input-field',
+                'placeholder': 'Username',
+            }),
+        }
+
+
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True,widget=forms.EmailInput(attrs={
         'class': 'input-field',

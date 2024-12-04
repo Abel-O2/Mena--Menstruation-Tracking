@@ -19,7 +19,7 @@ Forum
                     </button>
                     <div id="options-{{ post.id }}" class="options-menu" style="display: none; position: absolute; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 5px; padding: 10px; z-index: 100;">
                         <a href="{% url 'edit_post' post.id %}" style="display: block; margin-bottom: 5px;">Edit</a>
-                        <a href="{% url 'delete_post' post.id %}" style="display: block; color: red;">Delete</a>
+                        <a href="{% url 'delete_post' post.id %}" onclick="return confirm('Delete post?');" style="display: block; color: red;">Delete</a>
                     </div>
                 </div>
                 {% endif %}
@@ -39,7 +39,7 @@ Forum
                         {% if comment.userID == request.user %}
                         <div style="text-align: right; margin-top: 5px;">
                             <a href="{% url 'edit_comment' comment.id %}" style="margin-right: 10px; text-decoration: none; color: #007bff;">Edit</a>
-                            <a href="{% url 'delete_comment' comment.id %}" style="text-decoration: none; color: #dc3545;">Delete</a>
+                            <a href="{% url 'delete_comment' comment.id %}" onclick="return confirm('Delete comment?');" style="text-decoration: none; color: #dc3545;">Delete</a>
                         </div>
                         {% endif %}
                     </div>
