@@ -157,7 +157,7 @@ def period_tracker(request):
 
     today = date.today()
     year, month = today.year, today.month
-    cal = Calendar()
+    cal = calendar.Calendar()
     month_days = list(cal.itermonthdays(year, month))
     pinned_days = Calendar.objects.filter(year=year, month=month).values_list('day', flat=True)
 
@@ -206,7 +206,7 @@ def period_tracker(request):
     return render(request, 'womendashboard/period_tracker.html', context)
 
 
-
+@login_required
 def edit_period(request, period_id):
     period = get_object_or_404(Period, id=period_id)
     
@@ -225,7 +225,7 @@ def edit_period(request, period_id):
     return render(request, 'womendashboard/edit_period.html', context)
 
 
-
+@login_required
 def calendar_view(request, year=None, month=None):
     if year is None or month is None:
         today = date.today()
