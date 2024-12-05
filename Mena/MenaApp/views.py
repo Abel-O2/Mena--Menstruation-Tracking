@@ -19,6 +19,7 @@ from django import forms
 from MenaApp.models import CyclePhase, Lesson
 import calendar
 from datetime import date, timedelta
+from urllib.parse import unquote
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -154,6 +155,12 @@ def period_tracker(request):
     current_phase = None
     lessons = []
 
+    today = date.today()
+    year, month = today.year, today.month
+    cal = Calendar()
+    month_days = list(cal.itermonthdays(year, month))
+    pinned_days = Calendar.objects.filter(year=year, month=month).values_list('day', flat=True)
+
     if request.method == 'POST':
         form = SimulatedDayForm(request.POST)
         if form.is_valid():
@@ -186,6 +193,15 @@ def period_tracker(request):
         'mood': random_mood,
         'lessons': lessons,
         'form': form,
+         'year': year,
+        'month': month,
+        'month_name': calendar.month_name[month],
+        'days': month_days,
+        'pinned_days': pinned_days,
+        'previous_year': year - 1,
+        'next_year': year + 1,
+        'previous_month': month - 1 if month > 1 else 12,
+        'next_month': month + 1 if month < 12 else 1,
     }
     return render(request, 'womendashboard/period_tracker.html', context)
 
@@ -213,12 +229,12 @@ def edit_period(request, period_id):
 def calendar_view(request, year=None, month=None):
     if year is None or month is None:
         today = date.today()
-        year = today.year
-        month = today.month
+        year = int(year) if year else today.year
+        month = int(month) if month else today.month
 
     #Dyas of the month
     cal = calendar.Calendar()
-    month_days = cal.itermonthdays(year, month)
+    month_days = list(cal.itermonthdays(year, month))
     
     #Get code for the days in the current month
     pinned_days = Calendar.objects.filter(year=year, month=month).values_list('day', flat=True)
@@ -244,25 +260,29 @@ def calendar_view(request, year=None, month=None):
     else:
         form = PinForm()
 
+    request.session['pinned_days'] = list(pinned_days)
+
     pinned_events = Calendar.objects.filter(year=year, month=month)
     expired_days = [event.day for event in pinned_events if event.is_expired()]
 
-    previous_month = (month - 1) if month > 1 else 12
+    previous_month = month - 1 if month > 1 else 12
+    next_month = month + 1 if month < 12 else 1
     previous_year = year if month > 1 else year - 1
-    next_month = (month + 1) if month < 12 else 1
     next_year = year if month < 12 else year + 1
 
     context = {
         'year': year,
         'month': month,
         'month_name': calendar.month_name[month],
-        'days': list(month_days),
+        'days': month_days,
         'pinned_days': pinned_days,
         'expired_days': expired_days,
         'form': form,
         'previous_month': previous_month,
         'previous_year': previous_year,
-        'next_month': next_month,
-        'next_year': next_year,
+        'next_month':  next_month,
+        'next_year':  next_year,
+        'current_year': year,
+        'current_month': month
     }
     return render(request, 'calendar.html', context)

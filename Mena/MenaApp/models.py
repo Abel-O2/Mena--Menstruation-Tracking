@@ -78,7 +78,7 @@ class Calendar(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     start_time = models.DateTimeField(null=True, blank=True)
-    end_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)  
     is_pinned = models.BooleanField(default=False)
     year = models.IntegerField()
     month = models.IntegerField()
@@ -99,3 +99,19 @@ class Calendar(models.Model):
         if self.pinned_date:
             return [self.pinned_date + timedelta(days=i) for i in range(5)]
         return []
+    
+    def save(self, *args, **kwargs):
+        """Override save to ensure valid date."""
+        if not (1 <= self.month <= 12):
+            raise ValueError("Month must be between 1 and 12.")
+        if not (1 <= self.day <= 31):  # Basic check; extend with actual calendar rules if needed
+            raise ValueError("Day must be between 1 and 31.")
+        super().save(*args, **kwargs)
+
+class CalendarManager(models.Manager):
+    def expired(self):
+        """Return all expired pinned days."""
+        return self.filter(is_pinned=True, pinned_date__lt=date.today() - timedelta(days=5))
+
+class Meta:
+    ordering = ['year', 'month', 'day']

@@ -1,0 +1,26 @@
+<h1><strong>{{ month_name }} {{ year }} Calendar</strong></h1>
+
+<div class="calendar-navigation">
+    <a href="{% url 'calendar_view' year=previous_year|default:2024 month=previous_month|default:1 %}">&lt; Previous Month</a>
+    <a href="{% url 'calendar_view' year=next_year|default:2024 month=next_month|default:1 %}">Next Month &gt;</a>
+</div>
+
+<div class="calendar">
+    {% for day in days %}
+        <div class="day {% if day == 0 %}empty{% endif %} {% if day in pinned_days %}pinned{% endif %}">
+            {% if day != 0 %}
+                {{ day }}
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        <label for="day">Enter day to Pin/Unpin:</label>
+        <input type="number" name="day" min="1" max="31" required>
+        <button type="submit" name="pin">Pin</button>
+        <button type="submit" name="delete">Unpin</button>
+    </form>
+</div>

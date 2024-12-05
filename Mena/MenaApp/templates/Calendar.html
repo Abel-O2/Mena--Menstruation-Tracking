@@ -118,8 +118,8 @@
     <h1><strong>{{ month_name }} {{ year }} Calendar</strong></h1>
 
     <div class="calendar-navigation">
-        <a href="{% url 'calendar_view' year=previous_year month=previous_month %}">&lt; Previous Month</a>
-        <a href="{% url 'calendar_view' year=next_year month=next_month %}">Next Month &gt;</a>
+        <a href="{% url 'calendar_view' year=previous_year|default:current_year month=previous_month|default:current_month %}">&lt; Previous Month</a>
+        <a href="{% url 'calendar_view' year=next_year|default:current_year month=next_month|default:current_month %}">Next Month &gt;</a>
     </div>
 
     <div class="calendar">

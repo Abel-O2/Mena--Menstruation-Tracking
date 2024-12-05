@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import register,home, logout_view, post_forum
 from . import views
-from .views import register,home, logout_view, get_forum, post_forum, calendar_view
+from .views import register,home, logout_view, get_forum, post_forum
 
 urlpatterns = [
     path('home/', home, name='home'),
@@ -16,8 +16,8 @@ urlpatterns = [
     path('comment/add_comment/<int:post_id>/', views.add_comment, name='add_comment'),
     path('comment/edit_comment/<int:comment_id>/', views.edit_comment, name='edit_comment'),
     path('comment/delete_comment/<int:comment_id>/', views.delete_comment, name='delete_comment'),
+    path('calendar/', views.calendar_view, name='calendar_view'),
     path('calendar/<int:year>/<int:month>/', views.calendar_view, name='calendar_view'),
-    path('calendar/', calendar_view, name='calendar_view'),
     path('period/', views.period_tracker, name='period_tracker'),
     path('edit-period/<int:period_id>/', views.edit_period, name='edit_period'),
 ]
